@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { LiveProvider, LiveEditor, withLive, LiveError, LivePreview, LiveContext } from 'react-live';
+import { LiveProvider, LiveEditor } from 'react-live';
 import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
 import { type Props } from "@theme/CodeBlock";
 import { usePrismTheme } from '@docusaurus/theme-common';
@@ -8,6 +8,7 @@ import runZ3Web from './runZ3Web';
 import { Language } from 'prism-react-renderer';
 import liveCodeBlockStyles from '@docusaurus/theme-live-codeblock/src/theme/Playground/styles.module.css';
 import styles from './styles.module.css';
+import { useZ3QueueState } from './z3Queue';
 
 interface MyProps extends Props {
   readonly id: string;
@@ -88,6 +89,9 @@ function Z3Editor(props: MyProps) {
 
 
 export default function Z3CodeBlock({ input }) {
+
+  const {queue, setQueue} = useZ3QueueState();
+
   const { code, result } = input;
 
   const [currCode, setCurrCode] = useState(code);
@@ -107,7 +111,9 @@ export default function Z3CodeBlock({ input }) {
   // bypassing server-side rendering
   const onDidClickRun =
     (ExecutionEnvironment.canUseDOM) ? () => {
-
+      setQueue([...queue, currCode]);
+      console.log(queue);
+      
       setRunFinished(false);
       // TODO: only load z3 when needed
       const newResult = { ...result };

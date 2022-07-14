@@ -135,6 +135,10 @@ export default function plugin(options) {
                 {
                     type: 'import',
                     value: "import Z3CodeBlock from '@site/src/components/TutorialComponents'"
+                },
+                {
+                    type: 'import',
+                    value: "import {Z3GlobalStateProvider} from '@site/src/components/TutorialComponents/z3Queue'"
                 }
             )
         });
@@ -164,7 +168,9 @@ export default function plugin(options) {
                         type: 'jsx',
                         // TODO: encode the source into jsx tree to avoid XSS?
                         // TODO: create a generic <CodeBlock and pass lang={lang} />
-                        value: `<Z3CodeBlock input={${val}} />`
+                        value: `<Z3GlobalStateProvider>
+                        <Z3CodeBlock input={${val}} />
+                        </Z3GlobalStateProvider>`
                     }
                 )
             })
